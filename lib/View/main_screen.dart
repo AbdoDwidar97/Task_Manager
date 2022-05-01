@@ -54,10 +54,9 @@ class MainScreenState extends State <MainScreen>
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      body: Container(
+      body: SizedBox(
         width: widthUnit * 50,
         height: heightUnit * 50,
-        color: Colors.white,
         child: Consumer<MainScreenViewModel>(
           builder: (context, mainScreenViewModel, child)
           {
@@ -66,7 +65,7 @@ class MainScreenState extends State <MainScreen>
               itemBuilder: (context, idx)
               {
                 return Card(
-                  color: Colors.blue[300],
+                  color: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -99,9 +98,9 @@ class MainScreenState extends State <MainScreen>
                             /// Controls
                             Row(
                               children: [
-                                Icon(Icons.edit, color: Colors.white, size: widthUnit * heightUnit * 0.28),
+                                Icon(Icons.edit, color: Colors.blue[900], size: widthUnit * heightUnit * 0.28),
                                 SizedBox(width: widthUnit),
-                                Icon(Icons.delete, color: Colors.white, size: widthUnit * heightUnit * 0.28),
+                                Icon(Icons.delete, color: Colors.red[800], size: widthUnit * heightUnit * 0.28),
                               ],
                             ),
 

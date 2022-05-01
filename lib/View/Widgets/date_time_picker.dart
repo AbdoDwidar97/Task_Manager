@@ -1,17 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class DateTimePicker extends StatefulWidget
+class AppDateTimePicker extends StatefulWidget
 {
   BuildContext? context;
   TextEditingController? myController;
   DateTime? initialDate, firstDate, endDate, selectedDate;
+  String? label;
+
+  AppDateTimePicker({
+    this.context,
+    this.myController,
+    this.endDate,
+    this.firstDate,
+    this.initialDate,
+    this.label
+  });
 
   @override
-  State<StatefulWidget> createState() => DateTimePickerState();
+  State<StatefulWidget> createState() => AppDateTimePickerState();
 }
 
-class DateTimePickerState extends State <DateTimePicker>
+class AppDateTimePickerState extends State <AppDateTimePicker>
 {
   double widthUnit = 0, heightUnit = 0;
 
@@ -28,27 +38,25 @@ class DateTimePickerState extends State <DateTimePicker>
     widthUnit = MediaQuery.of(context).size.width / 50;
     heightUnit = MediaQuery.of(context).size.height / 50;
 
-    return InkWell(
+    return TextFormField(
       onTap: () => _selectDate(widget.context!),
-      child: TextFormField(
-        controller: widget.myController,
-        readOnly: true,
-        decoration: InputDecoration(
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(25.0),
-              borderSide: const BorderSide(
-                color: Colors.red,
-                width: 2.0,
-              ),
+      controller: widget.myController,
+      readOnly: true,
+      decoration: InputDecoration(
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25.0),
+            borderSide: const BorderSide(
+              color: Colors.red,
+              width: 2.0,
             ),
-            label: Text("Date From", style: TextStyle(fontSize: widthUnit * heightUnit * 0.12, color: Colors.black))
-        ),
-        validator: (val) => val!.isEmpty ? "Required Field" : null,
+          ),
+          label: Text(widget.label!, style: TextStyle(fontSize: widthUnit * heightUnit * 0.12, color: Colors.black))
       ),
     );
   }
 
-  Future<void> _selectDate(BuildContext context) async {
+  Future<void> _selectDate(BuildContext context) async
+  {
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: widget.initialDate!,
@@ -56,9 +64,17 @@ class DateTimePickerState extends State <DateTimePicker>
         lastDate: widget.endDate!
     );
 
-    if (picked != null && picked != widget.selectedDate) {
+    if (picked != null && picked != widget.selectedDate)
+    {
+      TimeOfDay? selectedTime = TimeOfDay(hour: picked.hour, minute: picked.minute);
+      selectedTime = await showTimePicker(
+        initialTime: TimeOfDay.now(),
+        context: widget.context!,
+      );
+
       setState(() {
         widget.selectedDate = picked;
+        widget.myController!.text = DateFormat("yMMMd").add_jm().format(picked.add(Duration(hours: selectedTime!.hour, minutes: selectedTime.minute)));
       });
     }
   }

@@ -4,7 +4,8 @@ import 'package:task_manager/View/main_screen.dart';
 import 'package:task_manager/ViewModel/create_task_screen_view_model.dart';
 import 'package:task_manager/ViewModel/main_screen_view_model.dart';
 
-void main() {
+void main()
+{
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => MainScreenViewModel()),

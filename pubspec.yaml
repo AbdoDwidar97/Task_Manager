@@ -32,6 +32,7 @@ dependencies:
   provider: ^6.0.2
   intl:
   date_time_picker: ^2.1.0
+  sqflite:
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -1,14 +1,17 @@
-import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:task_manager/Model/Components/task.dart';
 import 'package:task_manager/View/Widgets/date_time_picker.dart';
 import 'package:task_manager/ViewModel/create_task_screen_view_model.dart';
-import 'package:task_manager/ViewModel/main_screen_view_model.dart';
 
 class CreateTaskScreen extends StatefulWidget
 {
+  Task? myTask;
+
+  CreateTaskScreen({Key? key, this.myTask}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => CreateTaskScreenState();
 }
@@ -270,7 +273,7 @@ class CreateTaskScreenState extends State <CreateTaskScreen>
   {
     if (tag.isNotEmpty)
     {
-      _createTaskScreenViewModel.addNewTag(tag);
+      _createTaskScreenViewModel.addNewMyTag(tag);
     }
   }
 

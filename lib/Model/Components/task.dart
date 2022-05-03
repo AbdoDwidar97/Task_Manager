@@ -3,9 +3,10 @@ class Task
   String? taskName, description;
   List<String>? tags;
   DateTime? dateFrom, dateTo;
-  int? taskStatus;
+  int? id, taskStatus;
 
   Task({
+    this.id,
     this.taskName,
     this.taskStatus,
     this.description,

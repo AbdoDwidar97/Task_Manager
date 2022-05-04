@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:task_manager/Model/Components/task.dart';
+import 'package:task_manager/Model/Enums/task_status_enum.dart';
 import 'package:task_manager/View/Widgets/date_time_picker.dart';
 import 'package:task_manager/ViewModel/create_task_screen_view_model.dart';
 
@@ -18,6 +20,7 @@ class CreateTaskScreen extends StatefulWidget
 
 class CreateTaskScreenState extends State <CreateTaskScreen>
 {
+
   double widthUnit = 0, heightUnit = 0;
   late CreateTaskScreenViewModel _createTaskScreenViewModel;
 
@@ -28,6 +31,41 @@ class CreateTaskScreenState extends State <CreateTaskScreen>
   final tagController = TextEditingController();
   final dateFromController = TextEditingController();
   final dateToController = TextEditingController();
+
+  @override
+  void initState()
+  {
+    super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback((_)
+    {
+      initScreen();
+    });
+  }
+
+  void initScreen()
+  {
+    getAllTags();
+
+    if (widget.myTask != null)
+    {
+      Provider.of<CreateTaskScreenViewModel>(context, listen: false).setScreenMode(SCREEN_MODE.update);
+
+      taskNameController.text = widget.myTask!.taskName!;
+      descriptionController.text = widget.myTask!.description!;
+      dateFromController.text = DateFormat("yMMMd").add_jm().format(widget.myTask!.dateFrom!);
+      dateToController.text = DateFormat("yMMMd").add_jm().format(widget.myTask!.dateTo!);
+
+      Provider.of<CreateTaskScreenViewModel>(context, listen: false).setMyTags(widget.myTask!.tags!);
+      Provider.of<CreateTaskScreenViewModel>(context, listen: false).setStatus(TaskStatus.values[widget.myTask!.taskStatus!].getString());
+    }
+
+  }
+
+  void getAllTags()
+  {
+    Provider.of<CreateTaskScreenViewModel>(context, listen: false).getAllTags();
+  }
 
   @override
   Widget build(BuildContext context)
@@ -239,8 +277,34 @@ class CreateTaskScreenState extends State <CreateTaskScreen>
                     }
                 ),
 
+                SizedBox(height: heightUnit),
+
+                Consumer<CreateTaskScreenViewModel>(
+                    builder: (context, createTaskScreenViewModel, child)
+                    {
+                      return SizedBox(
+                        width: widthUnit * 50,
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton(
+                            alignment: Alignment.topLeft,
+                            hint: Text("Select Status", style: TextStyle(fontSize: widthUnit * heightUnit * 0.13)),
+                            items: createTaskScreenViewModel.taskStatus.map((e) {
+                              return DropdownMenuItem(
+                                value: e,
+                                child: Text(e, style: TextStyle(fontSize: widthUnit * heightUnit * 0.13, color: Colors.black)),
+                              );
+                            } ).toList(),
+                            onChanged: (val) => createTaskScreenViewModel.setStatus(val.toString()),
+                            value: createTaskScreenViewModel.selectedStatus,
+                          ),
+                        ),
+                      );
+                    }
+                ),
+
                 SizedBox(height: heightUnit * 2),
 
+                (_createTaskScreenViewModel.screen_mode == SCREEN_MODE.create) ?
                 SizedBox(
                     width: widthUnit * 50,
                     height: heightUnit * 3,
@@ -253,6 +317,19 @@ class CreateTaskScreenState extends State <CreateTaskScreen>
                         ),
                         onPressed: () => addTask(),
                         child: Text("Add Task", style: TextStyle(fontSize: widthUnit * heightUnit * 0.12, color: Colors.white))
+                    )
+                ) : SizedBox(
+                    width: widthUnit * 50,
+                    height: heightUnit * 3,
+                    child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(Colors.blue[900]),
+                          shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          )),
+                        ),
+                        onPressed: () => updateTask(),
+                        child: Text("Update Task", style: TextStyle(fontSize: widthUnit * heightUnit * 0.12, color: Colors.white))
                     )
                 ),
 
@@ -279,7 +356,27 @@ class CreateTaskScreenState extends State <CreateTaskScreen>
 
   addTask()
   {
+    _createTaskScreenViewModel.createTask(Task(
+      taskName: taskNameController.text.trim(),
+      taskStatus: TaskStatus.values.indexWhere((element) => element.getString() == _createTaskScreenViewModel.selectedStatus),
+      description: descriptionController.text.trim(),
+      dateFrom: DateTime.parse(dateFromController.text.trim()),
+      dateTo: DateTime.parse(dateToController.text.trim()),
+      tags: _createTaskScreenViewModel.myTags
+    ));
+  }
 
+  updateTask()
+  {
+    _createTaskScreenViewModel.updateTask(Task(
+        id: widget.myTask!.id!,
+        taskName: taskNameController.text.trim(),
+        taskStatus: TaskStatus.values.indexWhere((element) => element.getString() == _createTaskScreenViewModel.selectedStatus),
+        description: descriptionController.text.trim(),
+        dateFrom: DateTime.parse(dateFromController.text.trim()),
+        dateTo: DateTime.parse(dateToController.text.trim()),
+        tags: _createTaskScreenViewModel.myTags
+    ));
   }
 
 }

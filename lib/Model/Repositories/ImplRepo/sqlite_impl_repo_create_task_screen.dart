@@ -38,4 +38,26 @@ class SqliteImplRepoCreateTaskScreen implements IRepoCreateTaskScreen
     }
   }
 
+  @override
+  void createTag(TagTable tag, OnCallRequest onCallRequest) async
+  {
+    TagProvider tagProvider = TagProvider();
+    await tagProvider.insert(tag);
+    onCallRequest.onSuccess();
+  }
+
+  @override
+  Future<bool> searchForTag(String tagName) async
+  {
+    TagProvider tagProvider = TagProvider();
+    TagTable? tg = await tagProvider.getTagByName(tagName);
+    if (tg != null)
+    {
+      return true;
+    } else
+    {
+      return false;
+    }
+  }
+
 }

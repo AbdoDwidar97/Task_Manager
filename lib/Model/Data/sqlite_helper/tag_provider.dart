@@ -74,6 +74,27 @@ class TagProvider
     return null;
   }
 
+  Future<TagTable?> getTagByName(String tagName) async
+  {
+    Database myDatabase = await DBConfiguration().db;
+
+    TagTable tagTable = TagTable();
+    List<Map<String, dynamic>> maps = await myDatabase.query(tagTable.table_name,
+        columns: [
+          tagTable.id_column,
+          tagTable.tagName_column
+        ],
+        where: '${tagTable.tagName_column} = ?',
+        whereArgs: [tagName]);
+
+    if (maps.isNotEmpty)
+    {
+      return TagTable.fromMap(maps.first);
+    }
+
+    return null;
+  }
+
   Future<int> delete(int id) async
   {
     Database myDatabase = await DBConfiguration().db;

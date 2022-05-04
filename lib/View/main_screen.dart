@@ -4,6 +4,7 @@ import 'package:flutter/painting.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:task_manager/App%20Recourses/app_colors.dart';
+import 'package:task_manager/Model/Components/task.dart';
 import 'package:task_manager/Model/Data/holder.dart';
 import 'package:task_manager/Model/Enums/task_status_enum.dart';
 import 'package:task_manager/View/create_task_screen.dart';
@@ -121,9 +122,20 @@ class MainScreenState extends State <MainScreen>
                                 /// Controls
                                 Row(
                                   children: [
-                                    Icon(Icons.edit, color: Colors.blue[900], size: widthUnit * heightUnit * 0.28),
+
+                                    InkWell(
+                                        onTap: () => showUpdateTaskScreen(mainScreenViewModel.tasks[idx]),
+                                        child: Icon(Icons.edit, color: Colors.blue[900], size: widthUnit * heightUnit * 0.28
+                                      )
+                                    ),
+
                                     SizedBox(width: widthUnit),
-                                    Icon(Icons.delete, color: Colors.red[800], size: widthUnit * heightUnit * 0.28),
+
+                                    InkWell(
+                                        onTap: () => deleteTask(mainScreenViewModel.tasks[idx]),
+                                        child: Icon(Icons.delete, color: Colors.red[800], size: widthUnit * heightUnit * 0.28),
+                                    ),
+
                                   ],
                                 ),
 
@@ -264,6 +276,18 @@ class MainScreenState extends State <MainScreen>
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => CreateTaskScreen()),
     );
+  }
+
+  void showUpdateTaskScreen(Task task)
+  {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => CreateTaskScreen(myTask: task)),
+    );
+  }
+
+  deleteTask(Task task)
+  {
+
   }
 
 }
